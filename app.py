@@ -14,7 +14,11 @@ app=Flask(__name__)
 api=Api(app)
 app.secret_key='Devjyoti'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
-app.config['SQLALCHEMY_DATABASE_URI']=os.environ.get('DATABASE_URL','sqlite:///data.db')
+uri=os.environ.get('DATABASE_URL','sqlite:///data.db')
+if uri and uri.startswith("postgres://"):
+    uri = uri.replace("postgres://", "postgresql://", 1)
+app.config['SQLALCHEMY_DATABASE_URI']=uri
+
 @app.before_first_request
 def create_tables():
         db.create_all()
